@@ -183,6 +183,7 @@ namespace Starter
                 try
                 {
                     a = Choosing(Console.ReadLine(), admin, users);
+                    Console.Clear();
                     if (a == 'u')
                     {
                         while (true)
