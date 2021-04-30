@@ -185,7 +185,18 @@ namespace Starter
                     a = Choosing(Console.ReadLine(), admin, users);
                     if (a == 'u')
                     {
-                        break;
+                        while (true)
+                        {
+                            try
+                            {
+                                LookingAround(users[indexofuser], admin);
+                                break;
+                            }
+                            catch (Exception ex)
+                            { 
+                                Console.WriteLine(ex.Message);
+                            }
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -194,18 +205,7 @@ namespace Starter
                 }
             }
 
-            while (true)
-            {
-                try
-                {
-                    LookingAround(users[indexofuser], admin);
-                    break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
+            
         }
     }
 }
