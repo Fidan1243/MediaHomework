@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Starter
         static string mail;
         static string password;
         static int indexofuser;
-        static char Choosing(string choose, Admin.Admin a, User.User[] users)
+        static char Choosing(string choose, ref Admin.Admin a, ref User.User[] users)
         {
             Console.Clear();
             if (Convert.ToInt32(choose) == 1)
@@ -26,9 +26,8 @@ namespace Starter
 
                 if (mail == a.Email && a.Password == password)
                 {
-                    a.ShowPosts();
-
-                    Thread.Sleep(1000);
+                    Thread.Sleep(3000);
+                    AddOrNot(ref a);
                     Console.Clear();
                     return 'a';
                 }
@@ -40,9 +39,9 @@ namespace Starter
                 mail = Console.ReadLine();
                 Console.Write("Enter password: ");
                 password = Console.ReadLine();
-                if (FindUser(users, mail, password) != -1)
+                if (FindUser(ref users, mail, password) != -1)
                 {
-                    indexofuser = FindUser(users, mail, password);
+                    indexofuser = FindUser(ref users, mail, password);
                     return 'u';
                 }
                 else
@@ -56,7 +55,7 @@ namespace Starter
                 throw new Exception("Invalid choose");
             }
         }
-        static int FindUser(User.User[] users, string mail, string password)
+        static int FindUser(ref User.User[] users, string mail, string password)
         {
             for (int i = 0; i < users.Length; i++)
             {
@@ -81,7 +80,26 @@ namespace Starter
             }
             throw new Exception("Invalid ID");
         }
-        static void LookingAround(User.User user, Admin.Admin a)
+
+        static void AddOrNot(ref Admin.Admin a)
+        {
+            Console.Write("Do you wanna add post (1 for yes): ");
+            bool isInt = int.TryParse(Console.ReadLine(), out int res);
+            if (isInt)
+            {
+                if (res == 1)
+                {
+                    Console.Write("Enter content: ");
+                    a.addPost(new Post.Post() { Content = Console.ReadLine(), CreatingDate = DateTime.Now, LikeCount = 0, ViewCount = 0 });
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid type!");
+            }
+        }
+
+        static void LookingAround(ref User.User user, ref Admin.Admin a)
         {
             Console.Clear();
             Console.WriteLine("1) For View Post");
@@ -90,6 +108,10 @@ namespace Starter
             Console.Clear();
             if (Convert.ToInt32(ch) == 1)
             {
+                foreach (var item in a.Posts)
+                {
+                    item.Show();
+                }
                 Console.WriteLine("Enter post id:");
                 int ab = LookForPost(a.Posts, Console.ReadLine());
                 if (ab != -1)
@@ -97,6 +119,7 @@ namespace Starter
                     Console.Clear();
                     a.Posts[ab].Show();
                     a.SendMail(user.Email, a.Posts, ab, user, "View");
+                    a.Posts[ab].ViewCount += 1;
                     Console.Clear();
                 }
             }
@@ -107,6 +130,7 @@ namespace Starter
                 if (ab != -1)
                 {
                     a.SendMail(user.Email, a.Posts, ab, user, "Like");
+                    a.Posts[ab].LikeCount += 1;
                 }
                 Console.Clear();
             }
@@ -182,7 +206,7 @@ namespace Starter
                 Console.WriteLine("2)User");
                 try
                 {
-                    a = Choosing(Console.ReadLine(), admin, users);
+                    a = Choosing(Console.ReadLine(), ref admin, ref users);
                     Console.Clear();
                     if (a == 'u')
                     {
@@ -190,11 +214,11 @@ namespace Starter
                         {
                             try
                             {
-                                LookingAround(users[indexofuser], admin);
+                                LookingAround(ref users[indexofuser], ref admin);
                                 break;
                             }
                             catch (Exception ex)
-                            { 
+                            {
                                 Console.WriteLine(ex.Message);
                             }
                         }
@@ -206,7 +230,7 @@ namespace Starter
                 }
             }
 
-            
+
         }
     }
 }
