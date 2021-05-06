@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -56,7 +56,7 @@ namespace Admin
             PostCount++;
             Posts = newPost;
         }
-        public void addNotification(Notification.Notification notification)
+        public void addNotification(ref Notification.Notification notification)
         {
             var newNotification = new Notification.Notification[NotificationCount + 1];
             for (int i = 0; i < PostCount; i++)
