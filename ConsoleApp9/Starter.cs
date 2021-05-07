@@ -5,12 +5,33 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.Mail;
 
 namespace Starter
 {
 
     class Starter
     {
+        static void SendMail(string mails, Post.Post[] posts, int idp, User.User user, string vl)
+        {
+            Random r = new Random();
+            using (MailMessage mail = new MailMessage())
+            {
+                mail.From = new MailAddress(mails);
+                mail.To.Add(mails);
+                mail.Subject = $"You have 1 notification!";
+                mail.Body = $"<h1>{user.Name} {vl} your post. The post's content: {posts[idp].Content}</h1>";
+                mail.IsBodyHtml = true;
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("testm3212@gmail.com", "test121416");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
+            }
+
+        }
         static string mail;
         static string password;
         static int indexofuser;
@@ -119,7 +140,7 @@ namespace Starter
                 {
                     Console.Clear();
                     a.Posts[ab].Show();
-                    a.SendMail(user.Email, a.Posts, ab, user, "View");
+                    SendMail(a.Email, a.Posts, ab, user, "View");
                     a.Posts[ab].ViewCount += 1;
                     Console.Clear();
                 }
@@ -134,7 +155,7 @@ namespace Starter
                 dynamic ab = LookForPost(a.Posts, Console.ReadLine());
                 if (ab != -1)
                 {
-                    a.SendMail(user.Email, a.Posts, ab, user, "Like");
+                    SendMail(a.Email, a.Posts, ab, user, "Like");
                     a.Posts[ab].LikeCount += 1;
                 }
                 Console.Clear();
