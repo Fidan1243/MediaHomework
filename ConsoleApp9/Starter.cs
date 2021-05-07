@@ -26,7 +26,7 @@ namespace Starter
 
                 if (mail == a.Email && a.Password == password)
                 {
-                    Thread.Sleep(3000);
+                    a.ShowPosts();
                     AddOrNot(ref a);
                     Console.Clear();
                     return 'a';
@@ -89,6 +89,7 @@ namespace Starter
             {
                 if (res == 1)
                 {
+                    Console.Clear();
                     Console.Write("Enter content: ");
                     a.addPost(new Post.Post() { Content = Console.ReadLine(), CreatingDate = DateTime.Now, LikeCount = 0, ViewCount = 0 });
                 }
@@ -125,6 +126,10 @@ namespace Starter
             }
             else if (Convert.ToInt32(ch) == 2)
             {
+                foreach (var item in a.Posts)
+                {
+                    item.Show();
+                }
                 Console.WriteLine("Enter post id:");
                 dynamic ab = LookForPost(a.Posts, Console.ReadLine());
                 if (ab != -1)
